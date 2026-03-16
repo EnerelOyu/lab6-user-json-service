@@ -1,56 +1,81 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "users")
 public class User {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String username;
     private String name;
     private String email;
     private String bio;
     private String phone;
-    
-    //constructers
+
     public User() {
     }
 
-    public User(int id, String name, String email, String bio, String phone) {
+    public User(Integer id, String username, String name, String email, String bio, String phone) {
         this.id = id;
+        this.username = username;
         this.name = name;
         this.email = email;
         this.bio = bio;
         this.phone = phone;
     }
-    
-    //getter
-    public int getId() {
+
+    public Integer getId() {
         return id;
     }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getName() {
         return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getBio() {
         return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getPhone() {
         return phone;
     }
-    
-    //setter
-    public void setId(int id) {
-        this.id = id;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }

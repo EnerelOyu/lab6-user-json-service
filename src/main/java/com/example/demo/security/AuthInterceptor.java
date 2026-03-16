@@ -25,6 +25,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         String authHeader = request.getHeader("Authorization");
+        System.out.println("Authorization header: " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -33,15 +34,30 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         String token = authHeader.substring(7);
+        System.out.println("Extracted token: " + token);
 
-        boolean valid = soapAuthClient.validateToken(token);
+        // POST /users дээр profile үүсгэх үед userId хараахан байхгүй байж болно
+        if ("/users".equals(request.getRequestURI()) && "POST".equalsIgnoreCase(request.getMethod())) {
+            boolean valid = soapAuthClient.isTokenValid(token);
 
-        if (!valid) {
+            if (!valid) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid token");
+                return false;
+            }
+
+            return true;
+        }
+
+        Integer userId = soapAuthClient.getUserIdFromToken(token);
+
+        if (userId == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid token");
             return false;
         }
 
+        request.setAttribute("userId", userId);
         return true;
     }
 }
