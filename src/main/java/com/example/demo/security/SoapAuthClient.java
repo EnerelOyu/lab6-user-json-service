@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,9 +19,13 @@ public class SoapAuthClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${soap.service.url}")
+    private String soapServiceUrl;
+
     public Integer getUserIdFromToken(String token) {
         try {
             System.out.println("Sending token to SOAP validate: " + token);
+            System.out.println("SOAP URL: " + soapServiceUrl);
 
             String soapRequest =
                     "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" "
@@ -40,7 +45,7 @@ public class SoapAuthClient {
             HttpEntity<String> requestEntity = new HttpEntity<>(soapRequest, headers);
 
             String response = restTemplate.postForObject(
-                    "http://localhost:8080/ws",
+                    soapServiceUrl,
                     requestEntity,
                     String.class
             );
@@ -82,8 +87,11 @@ public class SoapAuthClient {
             return null;
         }
     }
+
     public boolean isTokenValid(String token) {
         try {
+            System.out.println("SOAP URL: " + soapServiceUrl);
+
             String soapRequest =
                     "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" "
                     + "xmlns:auth=\"http://example.com/usersoapservice/auth\">"
@@ -97,11 +105,12 @@ public class SoapAuthClient {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.TEXT_XML);
+            headers.add("SOAPAction", "");
 
             HttpEntity<String> requestEntity = new HttpEntity<>(soapRequest, headers);
 
             String response = restTemplate.postForObject(
-                    "http://localhost:8080/ws",
+                    soapServiceUrl,
                     requestEntity,
                     String.class
             );
