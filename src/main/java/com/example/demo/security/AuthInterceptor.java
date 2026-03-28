@@ -24,6 +24,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/auth")) {
+            return true;
+        }
+
         String authHeader = request.getHeader("Authorization");
         System.out.println("Authorization header: " + authHeader);
 
