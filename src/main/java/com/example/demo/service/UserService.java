@@ -25,8 +25,17 @@ public class UserService {
     }
 
     public User updateUser(int id, User updatedUser) {
-        updatedUser.setId(id);
-        return userRepository.save(updatedUser);
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setName(updatedUser.getName());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setBio(updatedUser.getBio());
+        existingUser.setPhone(updatedUser.getPhone());
+        existingUser.setImageUrl(updatedUser.getImageUrl());
+
+        return userRepository.save(existingUser);
     }
 
     public void deleteUser(int id) {

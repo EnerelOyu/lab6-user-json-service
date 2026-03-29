@@ -19,17 +19,19 @@ public class User {
     private String email;
     private String bio;
     private String phone;
+    private String imageUrl;
 
     public User() {
     }
 
-    public User(Integer id, String username, String name, String email, String bio, String phone) {
+    public User(Integer id, String username, String name, String email, String bio, String phone, String imageUrl) {
         this.id = id;
         this.username = username;
         this.name = name;
         this.email = email;
         this.bio = bio;
         this.phone = phone;
+        this.imageUrl = imageUrl;
     }
 
     public Integer getId() {
@@ -78,5 +80,12 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
