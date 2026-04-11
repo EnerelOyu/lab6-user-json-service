@@ -29,6 +29,12 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // Internal service calls (mail-service зэрэг) token-гүй GET /users хандах
+        String internalHeader = request.getHeader("X-Internal-Service");
+        if ("mail-service".equals(internalHeader)) {
+            return true;
+        }
+
         String authHeader = request.getHeader("Authorization");
         System.out.println("Authorization header: " + authHeader);
 
