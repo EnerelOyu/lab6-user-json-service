@@ -22,16 +22,18 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        //request-ээс username password-ийг авч SOAP service рүү илгээж, бүртгэл амжилттай эсэхийг шалгах
         boolean registerOk = soapAuthClient.registerUser(request.getUsername(), request.getPassword());
         if (!registerOk) {
             return ResponseEntity.badRequest().body("SOAP register failed");
         }
-
+        //register амжилттай бол SOAP service рүү дахин нэвтрэх хүсэлт илгээж, token-ийг авах
         String token = soapAuthClient.loginUser(request.getUsername(), request.getPassword());
         if (token == null) {
             return ResponseEntity.badRequest().body("SOAP login failed after register");
         }
-
+        
+        //user profile-ийг JSON service дээр үүсгээд SOAP service дээрх хэрэглэгчийн нэртэй холбох
         User user = new User();
         user.setUsername(request.getUsername());
         user.setName(request.getName());
@@ -40,7 +42,7 @@ public class AuthController {
         user.setPhone(request.getPhone());
 
         User savedUser = userService.createUser(user);
-
+        //SOAP service дээрх хэрэглэгчийн нэр болон JSON service дээрх хэрэглэгчийн ID-г холбох
         boolean linkOk = soapAuthClient.linkUserProfile(request.getUsername(), savedUser.getId());
         if (!linkOk) {
             return ResponseEntity.badRequest().body("Profile link failed");
@@ -55,7 +57,7 @@ public class AuthController {
         if (token == null) {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
-
+        //token-ийг ашиглан user ID-г авна
         Integer userId = soapAuthClient.getUserIdFromToken(token);
         return ResponseEntity.ok(new LoginResponse(token, userId));
     }
